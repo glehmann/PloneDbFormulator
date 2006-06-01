@@ -1,0 +1,1 @@
+Install the Zope product, and install via quickinstaller
