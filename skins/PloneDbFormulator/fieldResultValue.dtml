@@ -1,0 +1,4 @@
+<dtml-comment>title: value of field</dtml-comment>
+<span class="fieldResultValue">
+<dtml-if "not(result[_['sequence-item']]==None)"> <dtml-var "result[_['sequence-item']]"></dtml-if>
+</span>

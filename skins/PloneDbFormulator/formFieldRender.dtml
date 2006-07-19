@@ -1,0 +1,2 @@
+<span class="formFieldRender"><dtml-var "form.get_field(_['sequence-item']).render_from_request(REQUEST)">
+<dtml-if "form.get_field(_['sequence-item']).get_value('required')"><img src="required.gif" /></dtml-if></span>

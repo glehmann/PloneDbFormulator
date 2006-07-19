@@ -1,0 +1,50 @@
+<!-- chaque item result de la sequence contient un resultat -->
+
+ <!-- resultFields : la liste des champs a afficher. (par id) (choix du webmaster) -->
+ <!-- requestFields : la liste des champs du formulaire (par id) -->
+ <!-- REQUEST : le dictionnaire des choix de l'utilisateur -->
+
+ <!-- formFieldLabel, formFieldValue les infos sur le champ de formulaire en cours-->
+ <!-- entryLink : un lien vers une fiche complete -->
+
+
+<!-- ############## AVANT LES RESULTATS ############## -->
+
+<dtml-if sequence-start>
+
+<! -- ENONCE DE LA REQUETE -->
+
+<h1>Requete</h1>
+<dtml-var request>
+<dtml-in REQUESTFields>
+   <dtml-var formFieldLabel> <dtml-var formFieldValue>
+</dtml-in>
+
+<!-- PRESENTATION DES RESULTATS -->
+
+   <h1>Resultats</h1>
+   <table>
+   <tr>
+   <dtml-in resultFields> <!-- autre possibilite : utiliser dtml-in "['NOM','PAYS']" -->
+      <th><dtml-var fieldLabel></th>
+   </dtml-in>
+   </tr>
+
+</dtml-if>
+
+<!-- ############## CORPS DES RESULTATS ############## -->
+
+   <tr>
+   <dtml-in resultFields>
+      <td><dtml-var fieldResultValue></td>
+   </dtml-in>
+   <td><dtml-var entryLink></td>
+   </tr>
+
+<!-- ############## FIN DES RESULTATS ############## -->
+
+<dtml-if sequence-end>
+
+   </table>
+
+</dtml-if>

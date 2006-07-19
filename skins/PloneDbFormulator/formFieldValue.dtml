@@ -1,0 +1,2 @@
+<span class="formFieldValue">
+<dtml-if "REQUEST.form.has_key(_['sequence-item'])"><dtml-return "REQUEST.form[_['sequence-item']]"></dtml-if></span>

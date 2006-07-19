@@ -1,0 +1,2 @@
+<h1>No results</h1>
+<b>For request :</b> <dtml-var request>

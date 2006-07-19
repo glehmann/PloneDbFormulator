@@ -1,0 +1,1 @@
+<dtml-return "[fieldId for fieldId in REQUEST.form if fieldId in requestFields]">

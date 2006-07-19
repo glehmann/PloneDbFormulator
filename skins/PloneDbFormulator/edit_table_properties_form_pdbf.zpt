@@ -1,0 +1,115 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"
+      lang="en"
+      metal:use-macro="here/main_template/macros/master"
+      i18n:domain="plone">
+    <body>
+    
+<metal:main fill-slot="main">
+
+<span tal:define="global tableName request/tableName ; global tableStructure python:here.getDBStructure()[tableName]" />
+<span tal:define="global newReference python:not(hasattr(here.references,tableName))" />
+
+<h1 tal:attributes="href python:here.absolute_url()+'/edit_table_properties?tableName='+tableName" tal:content="python:here.getTablesDict()[tableName]" />
+
+
+<form name="table_properties_edit_form" method="get" tal:attributes="action python:['editTableProperties','setupTableProperties'][int(newReference)]">
+
+	<input type="hidden" name="tableName" tal:attributes="value tableName" />
+	
+	<h2>Rights on new forms</h2>
+		
+	
+		<table>
+			<tr>
+			
+			<td>Add Search Form</td>
+			<td><select multiple="multiple" name="addSearchForm_roles">
+				<option tal:repeat="role python:here.addSearchFormRole"  tal:attributes="selected python:here.roleHasDbFormPermissionOnTable(role,'addSearchForm',tableName)" tal:content="python:role" />
+			</select></td>
+			</tr>
+
+			<tr>
+			<td>Use Search Form</td>
+			<td><select multiple="multiple" name="useSearchForm_roles">
+				<option tal:repeat="role python:here.useSearchFormRole"  tal:attributes="selected python:here.roleHasDbFormPermissionOnTable(role,'useSearchForm',tableName)" tal:content="python:role" />
+			</select></td>
+			</tr>
+
+			<tr>
+			<td>Add Modify Form</td>
+			<td><select multiple="multiple" name="addModifForm_roles">
+				<option tal:repeat="role python:here.addModifFormRole"  tal:attributes="selected python:here.roleHasDbFormPermissionOnTable(role,'addModifForm',tableName)" tal:content="python:role" />
+			</select></td>
+			</tr>
+
+			<tr>
+			<td>Use Modify Form</td>
+			<td><select multiple="multiple" name="useModifForm_roles">
+				<option tal:repeat="role python:here.useModifFormRole"  tal:attributes="selected python:here.roleHasDbFormPermissionOnTable(role,'useModifForm',tableName)" tal:content="python:role" />
+			</select></td>
+			</tr>
+
+		</table>
+
+	<h2>Fields Properties</h2>
+	<table>
+	<tr><th /><th>Id</th><th>Label</th><th tal:condition="newReference">Type</th><th>Maximum (in octets)	</th><th>Non Null</th><th>Primary Key</th><th>Auto Num</th></tr>
+	<!-- field : on va le chercher dans la liste associee, dans DBStructure, au nom de la table -->
+	
+	
+	<tr tal:repeat="field tableStructure">
+	<span tal:define="fieldStructure python:tableStructure[field]">
+	
+	<td>
+		<a tal:condition="not:newReference" tal:define="urlField python:'references/'+tableName+'/'+field" tal:attributes="href python:urlField+'/manage_workspace'"> <img tal:attributes="src python:'misc_/Formulator/'+str(here.getReferenceField(tableName, field).meta_type)+'.gif'" /></a>
+	</td>
+	<td tal:content="field" />
+	
+	<td>
+		<input  tal:condition="newReference" type="text" tal:attributes="name python:field+'.label:string' ; value python:here.labelFromId(field)"/>
+		<input  tal:condition="not:newReference" type="text" tal:attributes="name python:field+'.label:string' ; value python:fieldStructure['label']"/>
+	</td>
+	<td tal:condition="newReference">
+			<select tal:attributes="name python:field+'.type'">
+			<option tal:repeat="fieldType python:here.getFormTypesOfDBType(fieldStructure['type'])" tal:content="fieldType" width="20"/>
+			</select>
+	</td>
+	<td>
+		<input tal:condition="newReference" cols="5" type="text" tal:attributes="name python:field+'.width'; value python:fieldStructure['width']"/>
+		<input tal:condition="python:not(newReference) and fieldStructure['width']" cols="5" type="text" tal:attributes="name python:field+'.width'; value python:fieldStructure['width']"/>
+		<input tal:condition="python:not(newReference) and not(fieldStructure['width'])" cols="5" type="text" tal:attributes="name python:field+'.width'" value=""/>
+		</td>
+	<td>
+		<input tal:condition="python:fieldStructure['null']" tal:attributes="name python:field+'.null'" type="checkbox" value="1" checked="" />
+		<input tal:condition="python:not(fieldStructure['null'])" tal:attributes="name python:field+'.null'" type="checkbox" value="1" />
+	</td>
+	<td>
+		<input tal:condition="python:fieldStructure['primary_key']" tal:attributes="name python:field+'.primary_key'" type="checkbox" value="1" checked="" />
+		<input tal:condition="python:not(fieldStructure['primary_key'])" tal:attributes="name python:field+'.primary_key'" type="checkbox" value="1" />
+	</td>
+	<td>
+		<input tal:condition="python:fieldStructure['auto_num']" tal:attributes="name python:field+'.auto_num'" type="checkbox" value="1" checked="" />
+		<input tal:condition="python:not(fieldStructure['auto_num'])" tal:attributes="name python:field+'.auto_num'" type="checkbox" value="1" />
+	</td>
+	
+	</span>
+	</tr>
+	
+	</table>
+	
+	
+	<input type="submit" value="Submit" />
+	
+</form>
+<p>
+<form tal:condition="python:hasattr(here.references,tableName)" action="initialize_reference_form">
+
+	<input type="hidden" name="tableName" tal:attributes="value tableName"/>
+	<input type="submit" value="Initialize this table" />
+	
+</form>
+</p>
+</metal:main>
+
+</body>
+</html>

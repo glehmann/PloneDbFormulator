@@ -1,0 +1,3 @@
+<dtml-let httprequest="entryRequest(result)">
+<a class="entryLink" href="&dtml-httprequest;">View</a>
+</dtml-let>

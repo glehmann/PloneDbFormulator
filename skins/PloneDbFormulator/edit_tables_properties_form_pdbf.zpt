@@ -1,0 +1,19 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"
+      lang="en"
+      metal:use-macro="here/main_template/macros/master"
+      i18n:domain="plone">
+    <body>
+    
+<metal:main fill-slot="main">
+
+<h1>Tables managed</h1>
+<p>Click on a link to edit table properties</p>
+<div tal:repeat="table python:here.getTablesDict()">
+	<a tal:attributes="href python:here.absolute_url()+'/edit_table_properties_form_pdbf?tableName='+table"><img src="DbTable.gif" /> <span tal:replace="python:here.getTablesDict()[table]" /></a>
+</div>
+ 
+</metal:main>
+
+</body>
+
+</html>

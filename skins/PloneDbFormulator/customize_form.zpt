@@ -1,0 +1,33 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"
+      lang="en"
+      metal:use-macro="here/main_template/macros/master"
+      i18n:domain="plone">
+    <body>
+    
+<metal:main fill-slot="main">
+
+		<!--customize : id , customized : object -->
+		<span tal:define="customize python:request.form['customize'];customized python:getattr(here,customize);">
+			<h1 tal:content="python:here.labelFromId(customize)"></h1>
+			
+			<form action="setCustomized" method="Post">
+				<input type="hidden" name="customize" tal:attributes="value customize" />
+				
+				<!-- no tabs in textarea ! --><textarea name="customizedBody:text" rows="20" columns="10"><span tal:condition="python:hasattr(customized,'body')" tal:replace="python:customized.body()" /><span tal:condition="python:(hasattr(customized,'document_src') and not hasattr(customized,'read'))" tal:replace="python:customized.document_src()" /></textarea>
+				
+				<p><input type="submit" value="submit" /></p>
+			</form>
+			
+			<form action="setDefault" method="GET">
+				<input type="hidden" name="customize" tal:attributes="value customize" />
+				<p><input type="submit" value="Set Default" /></p>
+			</form>
+			
+		</span>
+		
+</metal:main>
+
+
+</body>
+
+</html>

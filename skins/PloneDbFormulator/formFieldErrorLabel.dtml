@@ -1,0 +1,16 @@
+
+<dtml-let formfieldid=sequence-item>
+<dtml-if "REQUEST.form.has_key('formulator_submission')">
+<dtml-if error_value>
+        <dtml-in "error_value.errors">
+          <dtml-let fielderror=sequence-item>
+
+          <dtml-if "fielderror.field == form.get_field(formfieldid)">
+          <span class="formFieldErrorLabel"><dtml-var error_text></span>
+          </dtml-if>
+
+          </dtml-let>
+        </dtml-in>
+</dtml-if>
+</dtml-if>
+</dtml-let>

@@ -1,0 +1,35 @@
+<dtml-comment>
+title: add an entry to tableName table's entries
+connection id :connection
+max_rows : 1000
+max_cache : 100
+cache_time : 10
+allow_simple_one_argument_traversal : 1
+</dtml-comment>
+
+<dtml-comment> ------------------------- par lien ou requete, pour afficher une seule entree ------------------------- </dtml-comment>
+
+SELECT * FROM <dtml-var tableName>
+
+<dtml-in "form.getPkeys()">
+<dtml-let pkey=sequence-item>
+<dtml-let ZSQLType="getZSQLTypeOfField(pkey)">
+<dtml-let FieldUserValue="REQUEST[pkey]">
+
+   <dtml-if sequence-start> WHERE (
+   <dtml-else> AND 
+   </dtml-if>
+
+   <dtml-if "FieldUserValue">
+	<dtml-comment>Here we restrict zsql types to those managed by the rdb adaptater</dtml-comment>
+         <dtml-var pkey> = 
+         <dtml-if "ZSQLType=='string'"><dtml-sqlvar "str(FieldUserValue)" type="string">
+         <dtml-elif "ZSQLType=='int'"><dtml-sqlvar "int(FieldUserValue)" type="int">
+         <dtml-elif "ZSQLType=='float'"><dtml-sqlvar FieldUserValue type="float">
+         </dtml-if>
+   <dtml-else>1=1
+</dtml-if>
+
+<dtml-if sequence-end>)<dtml-else></dtml-if>
+
+</dtml-let></dtml-let></dtml-let></dtml-in>

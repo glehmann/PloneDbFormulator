@@ -1,0 +1,1 @@
+<dtml-if "getFormType=='searchForm'"><input type="radio" name="dbForm_op" value="AND" checked="checked" />And <input type="radio" name="dbForm_op" value="OR" />Or</dtml-if>

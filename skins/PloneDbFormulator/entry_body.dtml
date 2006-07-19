@@ -1,0 +1,32 @@
+ <!-- resultFields : la liste des champs a afficher. (par id) (choix du webmaster) -->
+ <!-- requestFields : la liste des champs du formulaire (par id) -->
+ <!-- REQUEST : le dictionnaire des choix de l'utilisateur -->
+
+ <!-- formFieldLabel, formFieldValue les infos sur le champ de formulaire en cours-->
+ <!-- fieldEntryLink : un lien vers une fiche complete -->
+
+
+<!-- ############## AVANT LES RESULTATS ############## -->
+
+<! -- ENONCE DE LA REQUETE -->
+
+<h1>Requete</h1>
+<dtml-var request>
+<dtml-in REQUESTFields>
+   <dtml-var formFieldLabel> <dtml-var formFieldValue>
+</dtml-in>
+
+<!-- PRESENTATION DES RESULTATS -->
+
+   <h1>Fiche</h1>
+   <table>
+
+   <dtml-in entryFields> <!-- autre possibilite : utiliser dtml-in "['NOM','PAYS']" -->
+         <tr>
+      <td><dtml-var fieldLabel></td>
+       <td><dtml-var fieldResultValue></td>
+       </tr>
+   </dtml-in>
+   </tr>
+
+   </table>

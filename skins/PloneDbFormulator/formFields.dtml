@@ -1,0 +1,1 @@
+<dtml-return "contextFieldsList(_['sequence-item'])">

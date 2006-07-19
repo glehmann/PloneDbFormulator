@@ -1,0 +1,18 @@
+<!-- page en cas d'erreur -->
+<!-- error_value : the exception value -->
+<!-- errorMessage : an error message -->
+
+<h1><dtml-var errorMessage></h1>
+
+<! -- REQUETE -->
+
+<h2>Requete</h2>
+<dtml-var request>
+<dtml-in REQUESTFields>
+   <dtml-var formFieldLabel> <dtml-var formFieldValue>
+</dtml-in>
+
+<!-- message d'erreur -->
+
+<h2>Error</h2>
+<p><dtml-var error_value></p>

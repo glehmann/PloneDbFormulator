@@ -1,0 +1,13 @@
+
+<dtml-if resultFields>
+Sort by : <select name="dbForm_order">
+<option value="">(indifferent)</option>
+
+<dtml-in resultFields>
+<dtml-let resultfield=sequence-item>
+      <option value="&dtml-resultfield;"><dtml-var "getattr(getattr(references,tableName),resultfield).get_value('title')"></option>
+</dtml-let>
+</dtml-in>
+
+</select>
+</dtml-if>

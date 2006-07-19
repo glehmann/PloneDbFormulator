@@ -1,0 +1,81 @@
+
+
+
+<dtml-try>
+        <!-- valide le contenu du formulaire. s'il y a une erreur, instancie l'objet error_value -->
+        <dtml-call "form.validate_all_to_request(REQUEST)">
+
+
+<dtml-except FormValidationError>
+      
+      <!-- en cas d'erreur de validation - , affiche le formulaire, avec les messages d'erreur eventuels -->
+	<dtml-var "form.header()">
+	<dtml-var form_body>
+	<dtml-var "form.footer()">
+
+<dtml-else>
+
+
+      <dtml-if "REQUEST.form.has_key('entry_submission') or not(emptyForm())">
+      <!-- si le formulaire n'est pas vide ou si on a demande l'acces direct vers une fiche, on affiche les resultats -->
+         <dtml-var "pre_script()">
+
+	 
+	 <dtml-let request=getSQLText> <!-- request contient le texte de la requete principale  -->
+         
+	 <!-- en cas de validation, execute la requete de modif, si pertinent -->
+	<dtml-try> <!-- essaye et renvoit un message en cas d'erreur d'integrite -->
+		 <dtml-var executeModifRequest>
+	
+		<!-- puis execute la requete de recherche associee -->
+       		<dtml-let results=getSQLResults>
+         	<dtml-var results>
+		
+		<dtml-if "not(results)">
+		<dtml-var no_results>
+		</dtml-if>
+		
+		<dtml-in results>
+		<dtml-var sequence-item>
+		
+			<dtml-let result=sequence-item>
+				<!-- si c'est a la fois le premier et le dernier item, c'est qu'il n'y en a qu'un ! -->
+				<!-- applique la template d'une entree -->
+				<dtml-if sequence-start><dtml-if sequence-end><dtml-var entry_body> 
+				<!-- sinon, applique la template pour plusieurs entrees -->
+				<dtml-else><dtml-var results_body> </dtml-if><dtml-else><dtml-var results_body></dtml-if>
+			</dtml-let>
+		
+		<dtml-else>
+		
+		</dtml-in>
+	
+		<dtml-var "post_script(results=results,request=request)">
+
+		</dtml-let>
+	
+	<dtml-except IntegrityError>
+		<dtml-let errorMessage="'Failure : your request does not respect integrity constraints'">
+			<dtml-var error_body>
+		</dtml-let>
+	<dtml-except ProgrammingError>
+		<dtml-let errorMessage="'Failure : your request has errors'">
+			<dtml-var error_body>
+		</dtml-let>
+	<dtml-except OperationalError>
+		<dtml-let errorMessage="'Failure : connection problem'">
+			<dtml-var error_body>
+		</dtml-let>
+	</dtml-try>
+			
+	</dtml-let>
+      <dtml-elif "emptyForm()">
+            <!-- si le formulaire est vide, bien entendu, on  l'affiche -->
+	<dtml-var "form.header()">
+	<dtml-var form_body>
+	<dtml-var "form.footer()">
+	
+      </dtml-if>
+</dtml-try>
+
+

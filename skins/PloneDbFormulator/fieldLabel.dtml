@@ -1,0 +1,1 @@
+<span class="fieldLabel"><dtml-var "getReferenceTable().get_field(_['sequence-item']).get_value('title')"></span>

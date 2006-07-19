@@ -1,0 +1,73 @@
+<dtml-comment>
+title: tableName table's entries
+connection id :connection
+max_rows : 1000
+max_cache : 100
+cache_time : 10
+allow_simple_one_argument_traversal : 1
+</dtml-comment>
+
+
+SELECT * FROM <dtml-var tableName>
+
+<dtml-comment> ----------------------- apres soumission du formulaire -------------------</dtml-comment>
+<dtml-if "REQUEST.form.has_key('formulator_submission')"> 
+
+
+<dtml-in "form.get_fields()">
+<dtml-let FieldId="_['sequence-item'].id">
+<dtml-let ZSQLType="getZSQLTypeOfField(_['sequence-item'])">
+<dtml-let FieldUserValue="REQUEST[FieldId]">
+
+   <dtml-if sequence-start>WHERE (
+   <dtml-else><dtml-if "hasattr(REQUEST,'dbForm_op')"> <dtml-var "and_or(REQUEST['dbForm_op'])"> <dtml-else> AND </dtml-if>
+   </dtml-if>
+
+
+   
+   <dtml-if "FieldId=='dbForm_op'"><dtml-elif "FieldId=='dbForm_order'">
+   <dtml-elif "FieldUserValue">
+	<dtml-comment>Here we restrict zsql types to those managed by the rdb adaptater</dtml-comment>
+      <dtml-var FieldId><dtml-if "getDBMSName=='Gadfly'">=<dtml-elif allowRegexp>~*<dtml-else>LIKE</dtml-if> <dtml-if "ZSQLType=='string'"><dtml-sqlvar "str(FieldUserValue)" type="string">
+      <dtml-elif "ZSQLType=='int'"><dtml-sqlvar "int(FieldUserValue)" type="int">
+      <dtml-elif "ZSQLType=='float'"><dtml-sqlvar FieldUserValue type="float">
+      </dtml-if>
+   <dtml-else>1=1
+</dtml-if>
+
+<dtml-if sequence-end>)<dtml-else></dtml-if>
+
+</dtml-let></dtml-let></dtml-let></dtml-in>
+
+
+
+<dtml-elif "REQUEST.form.has_key('entry_submission')"> 
+<dtml-comment> ------------------------- par lien, pour afficher une seule entree ------------------------- </dtml-comment>
+
+
+<dtml-in "form.getPkeys()">
+<dtml-let pkey=sequence-item>
+<dtml-let ZSQLType="getZSQLTypeOfField(pkey)">
+<dtml-let FieldUserValue="REQUEST.form[pkey]">
+
+   <dtml-if sequence-start>WHERE (
+   <dtml-else> AND 
+   </dtml-if>
+
+   <dtml-if "FieldUserValue">
+	<dtml-comment>Here we restrict zsql types to those managed by the rdb adaptater</dtml-comment>
+         <dtml-var pkey> = 
+         <dtml-if "ZSQLType=='string'"><dtml-sqlvar "str(FieldUserValue)" type="string">
+         <dtml-elif "ZSQLType=='int'"><dtml-sqlvar "int(FieldUserValue)" type="int">
+         <dtml-elif "ZSQLType=='float'"><dtml-sqlvar FieldUserValue type="float">
+         </dtml-if>
+   <dtml-else>1=1
+</dtml-if>
+
+<dtml-if sequence-end>)<dtml-else></dtml-if>
+
+</dtml-let></dtml-let></dtml-let></dtml-in>
+
+</dtml-if>
+
+<dtml-if "hasattr(REQUEST,'dbForm_order')"><dtml-if "REQUEST['dbForm_order']"> ORDER BY <dtml-var "REQUEST['dbForm_order']"></dtml-if></dtml-if>
