@@ -1,0 +1,3 @@
+<dtml-let httprequest="updateHttpRequest({'dbForm_order':_['sequence-item']},REQUEST)">
+<a href="&dtml-httprequest;">ordre</a>
+</dtml-let>

@@ -877,8 +877,6 @@ registerType(PloneDbFormsManager)
 
 
 
-
-
 def addPloneGadflyFormsManager(self,id,**kwargs):
 	""" add to self a PloneDbFormsManager of DBMS """
 	container = self
@@ -886,9 +884,6 @@ def addPloneGadflyFormsManager(self,id,**kwargs):
 	container._setObject(id, object)
 
 
-	
-	
-	
 class PloneGadflyFormsManager(PloneDbFormsManager):
 
 	_DBMSName = "Gadfly"
@@ -903,16 +898,8 @@ class PloneGadflyFormsManager(PloneDbFormsManager):
 	
 	pass
 
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+
+
 def managedDBMSDict(): # inutilise
 	""" returns dict of DBMS managed by this version of PloneDbFormulator, even if patched, associated to the class 
 	{_DBMSName:str: PloneDbFormsManager:class,} """

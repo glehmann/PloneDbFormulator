@@ -1,0 +1,21 @@
+<dtml-comment> return list of formulator fields corresponding to parameters in the http request 
+(from formulator form, usual html form or http request string)
+</dtml-comment>
+
+<dtml-let referencesList=getReferenceFieldsList>
+
+<dtml-let formulatorRequestFields="dict([ (field, REQUEST[field.getId()],) for field in form.get_fields() if REQUEST[field.getId()]])">
+
+
+<dtml-return formulatorRequestFields>
+
+<dtml-comment>
+<dtml-let httpRequestFields="dict([ (getReferenceTable().get_field(fieldId), REQUEST.form[fieldId],) for fieldId in REQUEST.form.keys() if ((fieldId in referencesList)) ])">
+<dtml-call "formulatorRequestFields.update(httpRequestFields)">
+</dtml-let>
+
+</dtml-comment>
+
+
+</dtml-let>
+</dtml-let>

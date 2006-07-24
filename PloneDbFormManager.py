@@ -316,20 +316,38 @@ class PloneDbFormManager(ATFolder):
 	def entryRequest(self,currentResult):
 		""" builds a link towards an entry from the current results row """
 		
-		pkeys = self.getPkeys() # list of primary keys of the current table
+		entryPkeys = dict([("field_"+pkey, currentResult[pkey],) for pkey in self.getPkeys()])
+		entryPkeys["entry_submission"]=1
+		
+		return self._createHttpRequest(entryPkeys)
+		
+	def updateHttpRequest(self,updatedValues={},REQUEST=None):
+		""" creates a new http request with values of old request and updated values """
+		
+		updatedRequestDict = dict([("field_"+field.getId(), REQUEST[field.getId()],) for field in self.form.get_fields() if REQUEST[field.getId()] ])
+		
+		'''
+		for param in REQUEST.form:
+			updatedRequestDict[param]=REQUEST.form[param]
+		'''
+		
+		updatedRequestDict.update(updatedValues)
+		updatedRequestDict.update({"http_submission":1})
+		
+		return self._createHttpRequest(updatedRequestDict)
+
+	def _createHttpRequest(self,paramDictionary):
+		""" create http request from a parameter dictionary """
 		
 		httpRequest = self.absolute_url()+'?'
 		
-		
-		for pkey in pkeys:
-			httpRequest += pkey+"="
-			httpRequest += str(currentResult[pkey])+"&"
-		
-		httpRequest+="entry_submission=1"
+		for key in paramDictionary:
+			httpRequest += key+"="
+			httpRequest += str(paramDictionary[key])+"&"
 		
 		return httpRequest
-				
-				
+		
+		
 	def getFormType(self):
 		""" gets form type (add form, search form, etc)"""
 		return self._formType

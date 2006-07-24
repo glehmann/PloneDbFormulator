@@ -16,8 +16,9 @@
 <dtml-else>
 
 
-      <dtml-if "REQUEST.form.has_key('entry_submission') or not(emptyForm())">
+      <dtml-if "REQUEST.form.has_key('entry_submission') or REQUEST.form.has_key('http_submission') or not(emptyForm())">
       <!-- si le formulaire n'est pas vide ou si on a demande l'acces direct vers une fiche, on affiche les resultats -->
+	 
          <dtml-var "pre_script()">
 
 	 
@@ -32,7 +33,7 @@
          	<dtml-var results>
 		
 		<dtml-if "not(results)">
-		<dtml-var no_results>
+		   <dtml-var no_results>
 		</dtml-if>
 		
 		<dtml-in results>
@@ -69,6 +70,8 @@
 	</dtml-try>
 			
 	</dtml-let>
+	
+		
       <dtml-elif "emptyForm()">
             <!-- si le formulaire est vide, bien entendu, on  l'affiche -->
 	<dtml-var "form.header()">

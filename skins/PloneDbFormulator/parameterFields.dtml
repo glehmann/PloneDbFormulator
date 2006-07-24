@@ -1,0 +1,12 @@
+<dtml-comment> return list of formulator fields corresponding to parameters in the http request 
+(from formulator form, usual html form or http request string)
+</dtml-comment>
+<dtml-let paramsList="['dbForm_order','dbForm_op','dbForm_exact']">
+
+<dtml-let formulatorParamFields=" dict( tuple([ (param, str(REQUEST[param]), ) for param in paramsList if REQUEST.has_key(param) ]) ) ">
+ 
+ <dtml-return formulatorParamFields>
+
+</dtml-let>
+</dtml-let>
+

@@ -1,12 +1,13 @@
 <!-- chaque item result de la sequence contient un resultat -->
 
  <!-- resultFields : la liste des champs a afficher. (par id) (choix du webmaster) -->
+
  <!-- requestFields : la liste des champs du formulaire (par id) -->
  <!-- REQUEST : le dictionnaire des choix de l'utilisateur -->
 
  <!-- formFieldLabel, formFieldValue les infos sur le champ de formulaire en cours-->
  <!-- entryLink : un lien vers une fiche complete -->
-
+ <!-- orderLink : un bouton pour reordonner la liste par le champ en cours --> 
 
 <!-- ############## AVANT LES RESULTATS ############## -->
 
@@ -26,7 +27,7 @@
    <table>
    <tr>
    <dtml-in resultFields> <!-- autre possibilite : utiliser dtml-in "['NOM','PAYS']" -->
-      <th><dtml-var fieldLabel></th>
+      <th><dtml-var orderLink><dtml-var fieldLabel></th>
    </dtml-in>
    </tr>
 

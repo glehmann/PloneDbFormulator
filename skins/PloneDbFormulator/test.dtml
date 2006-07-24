@@ -1,47 +1,71 @@
 <dtml-comment>
-
-<dtml-try>
-        <!-- valide le contenu du formulaire. s'il y a une erreur, instancie l'objet error_value -->
-        <dtml-call "form.validate_all_to_request(REQUEST)">
-
-
-<dtml-except FormValidationError>
-      
-      <!-- en cas d'erreur de validation - , affiche le formulaire, avec les messages d'erreur eventuels -->
-      <dtml-var display_form>
-
-<dtml-else>
-      <dtml-if "emptyForm()">
-            <!-- si le formulaire est vide, bien entendu, l'affiche -->
-            <dtml-var display_form>
-
-      <dtml-else>
-         <dtml-var "pre_script()">
-
-         <!-- en cas de validation, execute le resultat -->
-         <dtml-let results=getSQLResults>
-         <dtml-let request=getSQLText> <!-- request contient le texte de la requete -->
-         <dtml-in results>
-	 <dtml-var sequence-item>
-		<dtml-let result=sequence-item>
-			<!-- si c'est a la fois le premier et le dernier item, c'est qu'il n'y en a qu'un ! -->
-			<!-- applique la template d'une entree -->
-			<dtml-if sequence-start><dtml-if sequence-end><dtml-var entry_body> 
-			<!-- sinon, applique la template pour plusieurs entrees -->
-			<dtml-else><dtml-var results_body> </dtml-if><dtml-else><dtml-var results_body></dtml-if>
-		</dtml-let>
-	 
-         <dtml-else>
-         
-         </dtml-in>
-
-         <dtml-var "post_script(results=results,request=request)">
-
-         </dtml-let>
-         </dtml-let>
-
-      </dtml-if>
-</dtml-try>
-
-
+title: tableName table's entries
+connection id :connection
+max_rows : 1000
+max_cache : 100
+cache_time : 10
+allow_simple_one_argument_traversal : 1
 </dtml-comment>
+
+
+SELECT * FROM <dtml-var tableName>
+
+<dtml-comment> ----------------------- apres soumission du formulaire -------------------</dtml-comment>
+<dtml-if "REQUEST.form.has_key('formulator_submission')"> 
+
+
+<dtml-in "REQUESTFields">
+<dtml-let FieldId=sequence-item>
+<dtml-let ZSQLType="getZSQLTypeOfField(form.get_field(_['sequence-item']))">
+<dtml-let FieldUserValue="REQUEST[FieldId]">
+
+   <dtml-if sequence-start>WHERE (</dtml-if>
+ 
+   <dtml-if "FieldId=='dbForm_op'"><dtml-elif "FieldId=='dbForm_order'">
+   <dtml-elif "FieldUserValue">
+<dtml-if "hasattr(REQUEST,'dbForm_op')"> <dtml-var "and_or(REQUEST['dbForm_op'])"> <dtml-else> AND </dtml-if>
+
+	<dtml-comment>Here we restrict zsql types to those managed by the rdb adaptater</dtml-comment>
+      <dtml-var FieldId><dtml-if "getDBMSName=='Gadfly'">=<dtml-elif allowRegexp>~*<dtml-else>LIKE</dtml-if> <dtml-if "ZSQLType=='string'"><dtml-sqlvar "str(FieldUserValue)" type="string">
+      <dtml-elif "ZSQLType=='int'"><dtml-sqlvar "int(FieldUserValue)" type="int">
+      <dtml-elif "ZSQLType=='float'"><dtml-sqlvar FieldUserValue type="float">
+      </dtml-if>
+</dtml-if>
+
+<dtml-if sequence-end>)<dtml-else></dtml-if>
+
+</dtml-let></dtml-let></dtml-let></dtml-in>
+
+
+
+<dtml-elif "REQUEST.form.has_key('entry_submission')"> 
+<dtml-comment> ------------- par lien, pour afficher une seule entree ------- </dtml-comment>
+
+
+<dtml-in "form.getPkeys()">
+<dtml-let pkey=sequence-item>
+<dtml-let ZSQLType="getZSQLTypeOfField(pkey)">
+<dtml-let FieldUserValue="REQUEST.form[pkey]">
+
+
+
+   <dtml-if "FieldUserValue">
+      <dtml-if sequence-start>WHERE
+      <dtml-else> AND 
+      </dtml-if>
+	<dtml-comment>Here we restrict zsql types to those managed by the rdb adaptater</dtml-comment>
+         <dtml-var pkey> = 
+         <dtml-if "ZSQLType=='string'"><dtml-sqlvar "str(FieldUserValue)" type="string">
+         <dtml-elif "ZSQLType=='int'"><dtml-sqlvar "int(FieldUserValue)" type="int">
+         <dtml-elif "ZSQLType=='float'"><dtml-sqlvar FieldUserValue type="float">
+         </dtml-if>
+   <dtml-else>
+</dtml-if>
+
+<dtml-if sequence-end>)<dtml-else></dtml-if>
+
+</dtml-let></dtml-let></dtml-let></dtml-in>
+
+</dtml-if>
+
+<dtml-if "hasattr(REQUEST,'dbForm_order')"><dtml-if "REQUEST['dbForm_order']"> ORDER BY <dtml-var "REQUEST['dbForm_order']"></dtml-if></dtml-if>
