@@ -10,6 +10,7 @@ from permissions import *
 
 from interfaces.PloneDbFormsManager import IPloneDbFormsManager
 import PloneDbFormsManager
+import PloneGadflyFormsManager
 import PloneDbFormManager
 import DbAddFormManager
 
@@ -41,6 +42,7 @@ def initialize(context):
 	'''
 	## archetypes initialization
 	
+	# debut de la formule magique
 	content_types, constructors, ftis = process_types(listTypes(PROJECTNAME),PROJECTNAME)
 
 	utils.ContentInit(
@@ -49,7 +51,7 @@ def initialize(context):
 		permission = ManagePortal,
 		extra_constructors = constructors,
 		fti = ftis,).initialize(context)	
-
+	# fin de la formule magique
 	
         context.registerClass(
             meta_type = PloneDbFormManager.PloneDbFormManager.archetype_name,
@@ -62,5 +64,11 @@ def initialize(context):
             constructors = (DbAddFormManager.addDbAddFormManager,),
             permission = DbAddFormManager.DbAddFormManager.addPermission,
             )
-		
+
+	context.registerClass(
+            meta_type = PloneGadflyFormsManager.PloneGadflyFormsManager.archetype_name,
+            constructors = (PloneGadflyFormsManager.addPloneGadflyFormsManager,),
+            permission = ManagePortal,
+            ) 
+	    		
 	pass

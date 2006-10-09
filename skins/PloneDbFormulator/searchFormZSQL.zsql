@@ -46,7 +46,7 @@ SELECT * FROM <dtml-var tableName>
 	<dtml-comment>Here we restrict zsql types to those managed by the rdb adaptater</dtml-comment>
       <dtml-var FieldId><dtml-if "getDBMSName=='Gadfly' or 'dbForm_exact' in parameterFieldsList">=<dtml-elif allowRegexp>~*<dtml-else>LIKE</dtml-if>
       
-      <dtml-if "ZSQLType=='string'"><dtml-sqlvar "str(FieldUserValue)" type="string">
+      <dtml-if "ZSQLType=='string'"><dtml-sqlvar "unicode(FieldUserValue)" type="string">
       <dtml-elif "ZSQLType=='int'"><dtml-sqlvar "int(FieldUserValue)" type="int">
       <dtml-elif "ZSQLType=='float'"><dtml-sqlvar FieldUserValue type="float">
       </dtml-if>

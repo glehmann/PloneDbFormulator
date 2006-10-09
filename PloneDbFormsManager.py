@@ -26,6 +26,7 @@ import PloneDbFormManager
 
 this_module=sys.modules[__name__]
 
+# declares the type properties in plone interface
 factory_type_information = (
 	{ 'id':'PloneDbFormsManager',
 	 'meta_type':'PloneDbFormsManager',
@@ -85,6 +86,7 @@ factory_type_information = (
 	},
 )
 
+# declares archetype fields
 schema = ATFolder.schema + Schema((
 	ComputedField('DBMSName',
 	 			title="Name of the DBMS",
@@ -167,6 +169,9 @@ def addPloneDbFormsManager(container,id,**kwargs):
 	""" add to self a PloneDbFormsManager of DBMS """
 	object = PloneDbFormsManager(id,**kwargs)
 	container._setObject(id, object)
+	
+	
+	
 	references = Folder("Forms References of this Forms manager")
 	object._setObject("references",references)
 
@@ -306,12 +311,6 @@ class PloneDbFormsManager(ATFolder):
 			return False
 		
 		
-	'''
-	security.declareProtected(ManagePortal,'initializeDbFormsManager')        
-	def initializeDbFormsManager(self):
-		pass
-	'''		
-		
 		
 	security.declareProtected(View,'userCanViewDbForm')
 	def userCanViewDbForm(self,form):
@@ -323,16 +322,7 @@ class PloneDbFormsManager(ATFolder):
 		else:
 			return False
 
-	# connection creation form
-	'''
-	security.declareProtected(ManagePortal,'edit_connection_form_body')
-	def edit_connection_form_body(self,REQUEST):
-		return PageTemplateFile.PageTemplateFile('templates/edit_connection_form_body',globals(),).__call__()
-	'''
-
 	# ############################### DATABASE INFORMATIONS ################################
-	
-
 
 	security.declareProtected(View,'getDBTablesList')
 	def getDBTablesList(self):
@@ -368,9 +358,6 @@ class PloneDbFormsManager(ATFolder):
 
 		return DisplayList(tablesItems)
 	
-				
-			
-			
 			
 	security.declareProtected(View,'getDBTablesFieldsList')	
 	def getDBTablesFieldsList(self,tableName):
@@ -381,8 +368,6 @@ class PloneDbFormsManager(ATFolder):
 		result = request(tableName=tableName)
 		request.connection.manage_close_connection()
 		return result.names()
-	
-	
 	
 	
 	security.declareProtected(View,'getDBStructure')	
@@ -872,31 +857,6 @@ class PloneDbFormsManager(ATFolder):
 
 
 registerType(PloneDbFormsManager)
-
-
-
-
-
-def addPloneGadflyFormsManager(self,id,**kwargs):
-	""" add to self a PloneDbFormsManager of DBMS """
-	container = self
-	object = PloneGadflyFormsManager(id,**kwargs)
-	container._setObject(id, object)
-
-
-class PloneGadflyFormsManager(PloneDbFormsManager):
-
-	_DBMSName = "Gadfly"
-	
-	typeDescription= 'A folder associated to a Gadfly db providing tools to build interaction forms'
-	
-	def addConnection(self,connection_info,**kwargs):
-		self.manage_addZGadflyConnection(id="connection", connection=connection_info,check=True,**kwargs)
-	
-	def _setConnectionInfo(self,connection_info):
-		self.connection.connection_info = connection_info	
-	
-	pass
 
 
 

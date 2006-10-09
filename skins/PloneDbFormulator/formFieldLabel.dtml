@@ -1,1 +1,1 @@
-<span class="formFieldLabel"><dtml-var "form.get_field(_['sequence-item']).get_value('title')"></span>
+<span class="formFieldLabel"><dtml-var "form.get_field(_['sequence-item']).get_value('title').decode('utf-8')"></span>

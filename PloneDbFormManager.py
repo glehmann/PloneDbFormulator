@@ -8,6 +8,8 @@ from Products.Archetypes.public import MultiSelectionWidget, BooleanWidget, Sele
 from Products.Archetypes.public import ReferenceWidget
 
 from Products.Formulator.Form import ZMIForm
+from Products.Formulator.Errors import ValidationError, FormValidationError
+
 from Globals import DTMLFile
 from OFS.DTMLMethod import DTMLMethod
 from Products.PythonScripts.PythonScript import PythonScript
@@ -36,11 +38,11 @@ def addPloneDbFormManager(self,id,REQUEST=None,**kwargs):
 factory_type_information = (
 	{ 'id':'PloneDbFormManager',
 	'meta_type':'PloneDbFormManager',
+	'product':'PloneDbFormulator',
+	'factory':'addPloneDbFormManager', # au moins jusque ici	
 	'description':'An interaction form to the database',
 	'title':'Database Form',
 	'content_icon':'formmanager.gif',
-	'product':'PloneDbFormulator',
-	'factory':'addPloneDbFormManager',
 	'default_view':'view_form',
 	'immediate_view':'edit',
 	'filter_content_types':True,
@@ -218,18 +220,6 @@ class PloneDbFormManager(ATFolder):
 	# ###############################################################
 	
 	_forbiddenWords = ['update','create','insert','delete','database']
-	'''
-	actions = (
-		{'id':'view',
-		'name':'View',
-		'action':'view_forms_list',
-		'permissions':(View,)},
-		{'id':'edit',
-		'name':'Edit',
-		'action':'base_edit',
-		'permissions':(ModifyPortalContent,)}
-		)
-	'''	
 	
 	_formType = "searchForm" # id name of type let's create subclasses for other form types
 	_formRightsType = "SearchForm" # only SearchForm or ModifForm
@@ -246,56 +236,6 @@ class PloneDbFormManager(ATFolder):
 	# ################# FORM DISPLAYING AND EXECUTION ######
 	
 
-	security.declareProtected(View,'contextFieldsList')
-	def contextFieldsList(self,parametre=[]):
-		"""
-		renvoit la liste des champs de form correspondant aux id de champs et de groupes en parametre, qui est une chaine ou une liste de chaines
-		s'il n'y a pas de parametre, renvoit tous les champs de form ou tous les champs du groupe contextuel
-		"""
-		context=self
-		# GESTION DES PARAMETRES SPECIAUX
-		
-		# pas de parametre : tous les champs
-		if not(parametre):
-			# est on dans une sequence... 
-			if hasattr(context,'sequence-item'):
-				# et l'iteration correspond-elle a un nom de groupe ?
-				group = getattr(context,'sequence-item')
-				if group in [group.getId() for group in context.form.get_groups()]:
-					# si oui on recupere l'id du groupe et on en fait le parametre
-					parametre = [group.getId()]
-		
-				else:
-					# sinon, alors on renvoit tous les champs
-					return context.form.get_fields() 
-			else:
-				return context.form.get_fields()
-		
-		
-		# si le parametre contient une chaine, alors on la considere comme une liste contenant uniquement cette chaine
-		elif same_type(parametre,""):
-			parametre = [parametre]
-		
-		
-		# CONSTRUCTION DE LA LISTE
-		
-		FieldList = []
-		
-		# si le parametre contient une liste, on renvoit la liste tous les champs dont l'id est dans cette liste
-		
-		if same_type(parametre,[]):
-			for idGroupOrField in parametre:
-			# si l'element de la liste est un nom de champ, on ajoute le champ
-				if idGroupOrField in context.form.get_field_ids():
-					FieldList.append(context.form.get_field(idGroupOrField))
-				# si l'element de la liste est un nom de groupe, on ajoute les champs du groupe
-				elif idGroupOrField in [group for group in context.form.get_groups()]:
-					for group \
-					  in [group for group in context.form.get_groups() if group == idGroupOrField]:
-						FieldList = FieldList + context.form.get_fields_in_group(group)
-						break
-			
-		return [field.getId() for field in FieldList]
 	
 	security.declareProtected(View,'fieldNamesStrList')
 	def fieldNamesStrList(self):
@@ -367,7 +307,58 @@ class PloneDbFormManager(ATFolder):
 
 		return True
 	
+
+	security.declareProtected(View,'contextFieldsList')
+	def contextFieldsList(self,parametre=[]):
+		"""
+		renvoit la liste des champs de form correspondant aux id de champs et de groupes en parametre, qui est une chaine ou une liste de chaines
+		s'il n'y a pas de parametre, renvoit tous les champs de form ou tous les champs du groupe contextuel
+		"""
+		context=self
+		# GESTION DES PARAMETRES SPECIAUX
 		
+		# pas de parametre : tous les champs
+		if not(parametre):
+			# est on dans une sequence... 
+			if hasattr(context,'sequence-item'):
+				# et l'iteration correspond-elle a un nom de groupe ?
+				group = getattr(context,'sequence-item')
+				if group in [group.getId() for group in context.form.get_groups()]:
+					# si oui on recupere l'id du groupe et on en fait le parametre
+					parametre = [group.getId()]
+		
+				else:
+					# sinon, alors on renvoit tous les champs
+					return context.form.get_fields() 
+			else:
+				return context.form.get_fields()
+		
+		
+		# si le parametre contient une chaine, alors on la considere comme une liste contenant uniquement cette chaine
+		elif same_type(parametre,""):
+			parametre = [parametre]
+		
+		
+		# CONSTRUCTION DE LA LISTE
+		
+		FieldList = []
+		
+		# si le parametre contient une liste, on renvoit la liste tous les champs dont l'id est dans cette liste
+		
+		if same_type(parametre,[]):
+			for idGroupOrField in parametre:
+			# si l'element de la liste est un nom de champ, on ajoute le champ
+				if idGroupOrField in context.form.get_field_ids():
+					FieldList.append(context.form.get_field(idGroupOrField))
+				# si l'element de la liste est un nom de groupe, on ajoute les champs du groupe
+				elif idGroupOrField in [group for group in context.form.get_groups()]:
+					for group \
+					  in [group for group in context.form.get_groups() if group == idGroupOrField]:
+						FieldList = FieldList + context.form.get_fields_in_group(group)
+						break
+			
+		return [field.getId() for field in FieldList]
+				
 	# #######################################################
 	# 		FUNCTIONAL CUSTOMIZATION		#
 	# #######################################################
@@ -568,16 +559,20 @@ class PloneDbFormManager(ATFolder):
 			message+="portal_status_message=custom "+name+" has been added"
 			
 		return message
-		
+	
+	security.declareProtected(addPermission,"setCustomized_entry_body")
 	def setCustomized_entry_body(self,customizedBody):
 		return self._setCustomizedTemplate(name="entry_body",params="",body=customizedBody)
-		
-	def setCustomize_results_body(self,customizedBody):
+	
+	security.declareProtected(addPermission,"setCustomized_results_body")
+	def setCustomized_results_body(self,customizedBody):
 		return self._setCustomizedTemplate(name="results_body",params="",body=customizedBody)
-	 
+	
+	security.declareProtected(addPermission,"setCustomized_form_body")
 	def setCustomized_form_body(self,customizedBody):
 		return self._setCustomizedTemplate(name="form_body",params="",body=customizedBody)
-
+	
+	security.declareProtected(addPermission,"_setCustomizedTemplate")
 	def _setCustomizedTemplate(self,name=None,params=None,body=None):
 		template = getattr(self,name) # gets the first script acquired
 		body=str(body).replace("\r","")

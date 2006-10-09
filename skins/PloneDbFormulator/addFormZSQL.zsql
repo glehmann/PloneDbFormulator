@@ -17,7 +17,7 @@ INSERT INTO <dtml-var tableName> (<dtml-var fieldNamesStrList>) VALUES
    <dtml-if sequence-start>(</dtml-if>
 
    <dtml-if "normalizeSQL(FieldUserValue)">
-      <dtml-if "ZSQLType=='string'"><dtml-sqlvar "str(FieldUserValue)" type="string">
+      <dtml-if "ZSQLType=='string'"><dtml-sqlvar "unicode(FieldUserValue)" type="string">
       <dtml-elif "ZSQLType=='int'"><dtml-sqlvar "int(FieldUserValue)" type="int">
       <dtml-elif "ZSQLType=='float'"><dtml-sqlvar FieldUserValue type="float">
       </dtml-if>
